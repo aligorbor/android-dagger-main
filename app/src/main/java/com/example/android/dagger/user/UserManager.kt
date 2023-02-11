@@ -22,7 +22,6 @@ private val userComponentFactory: UserComponent.Factory) {
      *  is logged in or not, when the user logs in, a new instance will be created.
      *  When the user logs out, this will be null.
      */
-  //  var userDataRepository: UserDataRepository? = null
 var userComponent :UserComponent? = null
     private set
 

@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package com.example.android.dagger
+package com.example.android.dagger.storage
 
-import com.example.android.dagger.di.AppComponent
-import com.example.android.dagger.di.DaggerTestAppComponent
+import javax.inject.Inject
 
-class MyTestApplication : MyApplication() {
-    override fun initializeComponent(): AppComponent {
-        return DaggerTestAppComponent.create()
+class FakeStorage @Inject constructor() : Storage {
+
+    private val map = mutableMapOf<String, String>()
+
+    override fun setString(key: String, value: String) {
+        map[key] = value
     }
 
+    override fun getString(key: String): String {
+        return map[key].orEmpty()
+    }
 }
