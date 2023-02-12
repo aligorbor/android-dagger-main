@@ -19,23 +19,35 @@ package com.example.android.dagger.registration
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.android.dagger.MyApplication
 import com.example.android.dagger.R
 import com.example.android.dagger.di.RegistrationComponent
 import com.example.android.dagger.main.MainActivity
 import com.example.android.dagger.registration.enterdetails.EnterDetailsFragment
 import com.example.android.dagger.registration.termsandconditions.TermsAndConditionsFragment
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Inject
 
 class RegistrationActivity : AppCompatActivity() {
+
+    @InstallIn(SingletonComponent::class)
+    @EntryPoint
+    interface RegistrationEntryPoint {
+        fun registrationComponent(): RegistrationComponent.Factory
+    }
+
     lateinit var registrationComponent: RegistrationComponent
 
     @Inject
     lateinit var registrationViewModel: RegistrationViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        registrationComponent =
-            (application as MyApplication).appComponent.registrationComponent().create()
+//        registrationComponent =
+//            (application as MyApplication).appComponent.registrationComponent().create()
+        val entryPoint = EntryPointAccessors.fromApplication(applicationContext,RegistrationEntryPoint::class.java)
+        registrationComponent=entryPoint.registrationComponent().create()
         registrationComponent.inject(this)
 
         super.onCreate(savedInstanceState)

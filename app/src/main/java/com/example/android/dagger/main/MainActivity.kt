@@ -5,17 +5,25 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.example.android.dagger.MyApplication
 import com.example.android.dagger.R
 import com.example.android.dagger.login.LoginActivity
 import com.example.android.dagger.registration.RegistrationActivity
 import com.example.android.dagger.settings.SettingsActivity
+import com.example.android.dagger.user.UserManager
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
 
-    //    @Inject
-//    lateinit var userManager: UserManager
+    @InstallIn(SingletonComponent::class)
+    @EntryPoint
+    interface UserManagerEntryPoint{
+        fun userManager(): UserManager
+    }
+
     @Inject
     lateinit var mainViewModel: MainViewModel
 
@@ -26,9 +34,11 @@ class MainActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //      (application as MyApplication).appComponent.inject(this)
-        val userManager = (application as MyApplication).appComponent.userManager()
-        if (!userManager.isUserLoggedIn()) {
+  //      val userManager = (application as MyApplication).appComponent.userManager()
+        val entryPoint = EntryPointAccessors.fromApplication(applicationContext, UserManagerEntryPoint::class.java)
+        val userManager = entryPoint.userManager()
+
+            if (!userManager.isUserLoggedIn()) {
             if (!userManager.isUserRegistered()) {
                 startActivity(Intent(this, RegistrationActivity::class.java))
                 finish()
